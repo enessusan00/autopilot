@@ -6,16 +6,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-messages: any;
+  messages: any[] = [];
+
+
   ngOnInit(): void {
-   chrome.storage.sync.get(['message'], (data:any) => {
-      console.log('Background script\'ten gelen mesaj:', data);
-      this.messages = data.message.data;
-      console.log('messages ', this.messages);
+    chrome.storage.sync.get(['message'], (data: any) => {
+      this.messages = data.message.messages;
     }
-      );
+    );
   }
-
- 
-
 }

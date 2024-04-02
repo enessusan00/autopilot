@@ -1,7 +1,11 @@
-
-<div  *ngFor="let item of messages">
-  <div style="width: 400px;height: 100px;">
-    Role : {{item.authorRole}}<br>
-    Content :{{item.content}}<br>
+<div style="width: 400px;height: 100px;">
+  <div>
+    Mesajlar Listesi:
+  </div>
+  <div *ngFor="let item of messages">
+    <div>
+      Role : {{item.authorRole}}<br>
+      Content :{{item.content}}<br>
+    </div>
   </div>
 </div>

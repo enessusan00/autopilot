@@ -1,31 +1,42 @@
 {
-    "name": "AutoPilot",
-    "version": "1.0",
-    "description": "Better experience for the ChatGPT",
-    "manifest_version": 3,
-    "permissions": [
-        "activeTab",
-        "webNavigation",
-        "storage",
-        "scripting",
-        "tabs",
-        "declarativeContent",
-        "contextMenus",
-        "alarms",
-        "notifications"
-    ],
-    "background": {
-      "service_worker": "background.js",
-      "type": "module"
-    },
-    "action": {
-        "default_popup": "index.html"
-    },
-    "content_scripts": [
-        {
-          "matches": ["<all_urls>"],
-          "js": ["content-script.js"]
-        }
+  "name": "AutoPilot",
+  "version": "1.0",
+  "description": "Better experience for the ChatGPT",
+  "manifest_version": 3,
+  "permissions": [
+    "activeTab",
+    "webNavigation",
+    "storage",
+    "scripting",
+    "tabs",
+    "declarativeContent",
+    "contextMenus",
+    "alarms",
+    "notifications",
+    "webRequest",
+    "debugger",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-script.js"
       ]
-    
-  }
+    }
+  ],
+  "host_permissions": [
+    "https://chat.openai.com/*"
+  ]
+}
