@@ -1,6 +1,6 @@
 // Sekmenin URL'sini kontrol eden ve eklenti simgesini güncelleyen fonksiyon
 function checkTabAndToggleIcon(tabId: number, url?: string) {
-  if (url && url.includes("chat.openai.com")) {
+  if (url && url.includes("chat.openai.com/")) {
     chrome.action.enable(tabId); // Eklenti simgesini aktif yap
   } else {
     chrome.action.disable(tabId); // Eklenti simgesini pasif yap
@@ -35,6 +35,12 @@ chrome.runtime.onMessage.addListener(
   }
 
 );
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url) {
+      console.log('Tab URL değişti: ', changeInfo.url);
+      // Yeni URL ile bir şeyler yapın
+  }
+});
 
 
 
