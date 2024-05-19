@@ -15,7 +15,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     chrome.storage.sync.get(['message'], (data: any) => {
-      this.messages = data.message.messages;
+      console.log('Data:', data);
+      this.messages = data.message;
+      console.log('Messages:', this.messages);
     }
     );
   }
