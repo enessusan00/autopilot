@@ -97,7 +97,7 @@ function UpdateComponent() {
           } else if (userMessages.length == 0) {
             componentBody += `
                   <h1 class="text-xl font-bold">AutoPilot 🚀</h1>
-                  <p class="text-lg">Hey! Let’s chat with GPT! Just type away! 🎉</p>
+                  <p class="text-lg text-center">Hey! Let’s chat with GPT! Just type away! 🎉</p>
                   <p class="text-lg animate-pulse">We'll get ready ...</p>
                 `;
           }
@@ -108,9 +108,10 @@ function UpdateComponent() {
           <p class="text-lg"> Check these out!</p>
         `
           for (var i = 0; i < topicQuestions.length; i++) {
+
             componentBody += `
         <button id="question-${i}" class="bg-token-sidebar-surface-primary dark:text-white text-black border-2 font-bold py-2 px-4 rounded-md mx-2 mb-2">
-        ${topicQuestions[i]}
+        ${trimFirstAndLast(topicQuestions[i])}
         </button>
           `
           }
@@ -150,14 +151,22 @@ function UpdateComponent() {
     console.log('AUTO-PILOT BODY NOT FOUND');
   }
 }
-
+function trimFirstAndLast(str: string): string {
+  if (str.length <= 2) {
+    return ''; // Eğer stringin uzunluğu 2 veya daha az ise, boş string döndür.
+  }
+  if (str.startsWith(`'`)) {
+    return str.substring(1, str.length - 1);
+  }
+  return str;
+}
 function listenQuestions() {
   for (var i = 0; i < topicQuestions.length; i++) {
     const questionButton = document.getElementById(`question-${i}`) as HTMLButtonElement;
     if (questionButton) {
       questionButton.addEventListener('click', () => {
         // sendRequestToGPT(topicQuestions[i]); // Asenkron fonksiyon çağrısı
-        sendRequestToGPT(questionButton.textContent);
+        sendRequestToGPT('🚀' + questionButton.textContent);
         questionButton.disabled = true;
         questionButton.textContent = '👍';
         disableAllButtons()
@@ -200,7 +209,7 @@ function listenQuestions() {
 // AutoPilot mod: Her bir soruyu sırayla gönderir ve kullanıcı durdurmadığı sürece yeni soru üretilip gönderilir.
 function toggleAutpilotMode() {
   autopilotMod = !autopilotMod;
-  if (autopilotMod== true) {
+  if (autopilotMod == true) {
     sendRequestToGPT(topicQuestions[0]);
     const component = document.getElementById('auto-pilot-body');
     if (component) {
@@ -219,7 +228,7 @@ function toggleAutpilotMode() {
         }
       }
     }
-  }else{
+  } else {
     UpdateComponent()
   }
 }

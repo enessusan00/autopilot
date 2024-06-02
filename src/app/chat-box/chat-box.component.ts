@@ -59,7 +59,7 @@ export class ChatBoxComponent implements OnInit {
   constructor(private openaiService: OpenAIService) { }
 
   ngOnInit(): void {
-
+  
   }
   state = "nothing"
   async sendMessage() {
@@ -89,62 +89,67 @@ export class ChatBoxComponent implements OnInit {
   async analyzeMessages() {
     const userMessages = this.messages.filter(msg => msg.sender === 'user').map(msg => msg.text);
 
-    const response = await this.openaiService.detectTopicAndScore(userMessages);
-    this.messages.push({ text: response, sender: 'assistant' });
-    const [analysis, scoreSection] = response.split('Benzerlik Skorları:');
+    this.openaiService.detectTopicAndScore(userMessages).subscribe((response) => {
+      ;
+      this.messages.push({ text: response.response, sender: 'assistant' });
+      const [analysis, scoreSection] = response.response.split('Benzerlik Skorları:');
 
-    // Analiz edilen konuyu çıkar
-    const analysisLines = analysis.split('\n');
-    this.topic = analysisLines.find((line: string) => line.startsWith('Ana Konu:'))?.replace('Ana Konu:', '').trim();
+      // Analiz edilen konuyu çıkar
+      const analysisLines = analysis.split('\n');
+      this.topic = analysisLines.find((line: string) => line.startsWith('Ana Konu:'))?.replace('Ana Konu:', '').trim();
 
-    // Benzerlik skorlarını çıkar
-    const scoreLines = scoreSection.trim().split('\n').map(line => line.split('. ')[1]);
-    const scores = scoreLines.map(score => parseInt(score, 10));
+      // Benzerlik skorlarını çıkar
+      const scoreLines = scoreSection.trim().split('\n').map(line => line.split('. ')[1]);
+      const scores = scoreLines.map(score => parseInt(score, 10));
 
-    // Toplam skoru hesapla
-    this.totalScore = scores.reduce((acc, score) => acc + score, 0);
-    this.allMessages = userMessages
-    // Eşik değerine ulaşıldığında veya altında kaldığında analiz yap
-    if (this.totalScore >= this.scoreThreshold) {
-      await this.createTopicMap(userMessages);
-    } else if (this.totalScore <= this.negativeScoreThreshold) {
-      this.resetAnalysis();
-    }
+      // Toplam skoru hesapla
+      this.totalScore = scores.reduce((acc, score) => acc + score, 0);
+      this.allMessages = userMessages
+      // Eşik değerine ulaşıldığında veya altında kaldığında analiz yap
+      if (this.totalScore >= this.scoreThreshold) {
+        this.createTopicMap(userMessages);
+      } else if (this.totalScore <= this.negativeScoreThreshold) {
+        this.resetAnalysis();
+      }
+    })
   }
   async autoPilotMode() {
     this.messages.push({ text: this.input, sender: 'user' });
     const userMessages = this.messages.filter(msg => msg.sender === 'user').map(msg => msg.text);
 
-    const response = await this.openaiService.detectTopicAndScore(userMessages);
-    this.messages.push({ text: response, sender: 'assistant' });
-    const [analysis, scoreSection] = response.split('Benzerlik Skorları:');
+    this.openaiService.detectTopicAndScore(userMessages).subscribe((response) => {
+      this.messages.push({ text: response.response, sender: 'assistant' });
+      const [analysis, scoreSection] = response.response.split('Benzerlik Skorları:');
 
-    // Analiz edilen konuyu çıkar
-    const analysisLines = analysis.split('\n');
-    this.topic = analysisLines.find((line: string) => line.startsWith('Ana Konu:'))?.replace('Ana Konu:', '').trim();
+      // Analiz edilen konuyu çıkar
+      const analysisLines = analysis.split('\n');
+      this.topic = analysisLines.find((line: string) => line.startsWith('Ana Konu:'))?.replace('Ana Konu:', '').trim();
 
-    // Benzerlik skorlarını çıkar
-    const scoreLines = scoreSection.trim().split('\n').map(line => line.split('. ')[1]);
-    const scores = scoreLines.map(score => parseInt(score, 10));
+      // Benzerlik skorlarını çıkar
+      const scoreLines = scoreSection.trim().split('\n').map(line => line.split('. ')[1]);
+      const scores = scoreLines.map(score => parseInt(score, 10));
 
-    // Toplam skoru hesapla
-    this.totalScore = scores.reduce((acc, score) => acc + score, 0);
-    this.allMessages = userMessages
-    // Eşik değerine ulaşıldığında veya altında kaldığında analiz yap
+      // Toplam skoru hesapla
+      this.totalScore = scores.reduce((acc, score) => acc + score, 0);
+      this.allMessages = userMessages
+      // Eşik değerine ulaşıldığında veya altında kaldığında analiz yap
+    }
+    )
   }
   allMessages = []
   topicQuestions = [];
-  async createTopicMap(messages: string[]) {
+  createTopicMap(messages: string[]) {
     this.topicQuestions = []
-    const response = await this.openaiService.detectTopicAndCreateMap(messages);
-    var questions = response.replace(/Konu Haritası ve İlgili Sorular:/g, '');
-    questions = questions.split('\n').filter(line => line.trim()).map(line => line.trim());
-    questions = questions.map(question =>
-      question.replace(/^\d+\.\s*/, ''))
-    this.topicQuestions = questions
-    setTimeout(() => {
-      this.state = "animate"
-    }, 400);
+    this.openaiService.detectTopicAndCreateMap(messages,this.topic).subscribe((response) => {
+      var questions = response.response.replace(/Konu Haritası ve İlgili Sorular:/g, '');
+      questions = questions.split('\n').filter(line => line.trim()).map(line => line.trim());
+      questions = questions.map(question =>
+        question.replace(/^\d+\.\s*/, ''))
+      this.topicQuestions = questions
+      setTimeout(() => {
+        this.state = "animate"
+      }, 400);
+    })
   }
   i = 0
   async startAutopilot() {
@@ -171,5 +176,9 @@ export class ChatBoxComponent implements OnInit {
     this.topic = '';
     this.userRequests = [];
     this.topicMap = {};
+  }
+
+  sendExampleMessages() {
+    this.openaiService.sendRequest()
   }
 }
