@@ -37,22 +37,25 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.url) {
     console.log('Tab URL değişti: ', changeInfo.url);
-    // Yeni URL ile bir şeyler yapın
+    chrome.tabs.sendMessage(tabId, { action: "changed", greeting: "İstek Tamamlandı background.ts" }, (response) => {
+
+      // Yeni URL ile bir şeyler yapın
+    }
+    );
   }
-});
+} );
 
 // Web request tamamlandığında yapılacak işlemler
 chrome.webRequest.onCompleted.addListener(
   (details) => {
-    if (details.url === 'https://chat.openai.com/backend-api/conversation') {
+    
+    if (details.url === 'https://chatgpt.com/backend-api/conversation') {
       console.log('Web request tamamlandı');
       setTimeout(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          console.log('Tabs:', tabs);
           if (tabs[0].id) {
-            chrome.tabs.sendMessage(tabs[0].id, { greeting: "İstek Tamamlandı background.ts" }, (response) => {
-              chrome.storage.sync.set({ response }, () => {
-                console.log('Response saved:', response);
-              });
+            chrome.tabs.sendMessage(tabs[0].id, { action: "webRequestCompleted", greeting: "İstek Tamamlandı background.ts" }, (response) => {
             });
           }
         });

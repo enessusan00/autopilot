@@ -56,7 +56,7 @@ export class OpenAIService {
 
   async detectTopicAndCreateMap(messages: string[]): Promise<any> {
     const prompt = `
-    Kullanıcı mesajlarını analiz ederek ana konuyu belirleyin ve kullanıcının bu konu üzerinde detaylı araştırma yaptığını düşünün sorduğu sorular dışında hangi soruları sorabileceğini belirleyin. Olası diğer ilgili 5 soru içeren bir konu haritası oluşturun.CEVAP OLARAK SADECE KONU HARİTASI İLE İLGİLİ SORULARI YAZIN.
+    Kullanıcı mesajlarını analiz ederek ana konuyu belirleyin ve kullanıcının bu konu üzerinde detaylı araştırma yaptığını düşünün sorduğu sorular HARİCİNDE hangi soruları sorabileceğini belirleyin. Olası diğer ilgili 5 soru içeren bir konu haritası oluşturun.CEVAP OLARAK SADECE KONU HARİTASI İLE İLGİLİ SORULARI YAZIN.
 
     Kullanıcı Mesajları:
 
