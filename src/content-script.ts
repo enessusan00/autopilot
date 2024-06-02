@@ -79,25 +79,25 @@ function UpdateComponent() {
           if (userMessages.length == 1) {
             componentBody += `
             <h1 class="text-xl font-bold">AutoPilot 🚀</h1>
-            <p class="text-lg">Continue to conversation with GPT </p>
+            <p class="text-lg">Awesome! Keep it coming! ✍️✨ </p>
             <p class="text-lg animate-pulse">⌨️ type type type 😩</p>
           `
           } else if (userMessages.length == 2) {
             componentBody += `
               <h1 class="text-xl font-bold">AutoPilot 🚀</h1>
               <p class="text-lg"> 🤔 </p>
-              <p class="text-lg animate-pulse">thinking...</p>
+              <p class="text-lg animate-pulse">Thinking cap on! 🧠💡</p>
             `
           } else if (userMessages.length >= 3) {
             componentBody += `
                 <h1  class="text-xl font-bold">AutoPilot 🚀</h1>
                 <p class="text-lg">💬 </p>
-                <p class="text-lg animate-pulse">One more ...</p>
+                <p class="text-lg animate-pulse">Almost there! One more push! 💥</p>
               `
           } else if (userMessages.length == 0) {
             componentBody += `
                   <h1 class="text-xl font-bold">AutoPilot 🚀</h1>
-                  <p class="text-lg">Start a conversation with GPT </p>
+                  <p class="text-lg">Hey! Let’s chat with GPT! Just type away! 🎉</p>
                   <p class="text-lg animate-pulse">We'll get ready ...</p>
                 `;
           }
@@ -105,7 +105,7 @@ function UpdateComponent() {
         case 1:
           componentBody = `
           <h1  class="text-xl font-bold">AutoPilot 🚀</h1>
-          <p class="text-lg">Select Questions</p>
+          <p class="text-lg"> Check these out!</p>
         `
           for (var i = 0; i < topicQuestions.length; i++) {
             componentBody += `
