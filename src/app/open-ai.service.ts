@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import OpenAI from 'openai';
-import { Observable } from 'rxjs';
-
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -100,17 +100,52 @@ export class OpenAIService {
 
     return this.http.post('http://localhost:11434/api/generate',
       {
-        "model": "llama3",
+        "model": "aya",
         "prompt": prompt,
         "stream": false
       }, { headers: header }
     )
+  }
+  private apiUrl = 'http://localhost:11434/api/chat';
+  postChatStream(message: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+  
+    const body = {
+      model: 'aya',
+      messages: message
+    };
+  
+    return this.http.post<any>(this.apiUrl, body, {
+      headers: headers,
+      responseType: 'text' as 'json' // Ensure response is treated as text for proper parsing
+    }).pipe(
+      catchError(this.handleError) // Add error handling
+    );
+  }
+  
+  // Error handling function (example)
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('An error occurred:', error.message);
+    return throwError('Something bad happened; please try again later.');
+  }
+  private handleStreamResponse(response: string): any {
+    const lines = response.split('\n');
+    const result = lines.map(line => {
+      try {
+        return JSON.parse(line);
+      } catch (e) {
+        return null;
+      }
+    }).filter(item => item !== null);
 
+    return result;
   }
 
   detectTopicAndCreateMap(messages: string[], topic: string): Observable<any> {
     const prompt = `
-    Kullanıcının odaklanmak istediği ana konuyu  üzerinde detaylı araştırma yaptığını düşünün ve sorduğu sorular HARİCİNDE bu konu ile ilgili hangi soruları sorabileceğini belirleyin. Kullanıcının odaklanmak istediği konu ile ilgili en fazla 5 soru içeren bir konu haritası oluşturun. CEVAP OLARAK SADECE KONU HARİTASI İLE İLGİLİ SORULARI YAZIN. TÜRKÇE ve Anlamlı CEVAP VERİN. ÜRETTİĞİN SORULAR VE  SORULARIN CEVAPLARI KULLANICI SORULARINA VE SORULARININ CEVAPLARINA BENZEMEMELİDİR. ÜRETİLECEK SORUNUN CEVABI KULLANICI SORULARININ CEVAPLARI İLE BENZER OLAMAZ. VERİLEN ÖRNEK FORMATIN DIŞINA ÇIKMAYIN. VERİLEN FORMATIN DIŞINDA CEVAP VERME. HİÇBİR AÇIKLAMA YAPMA. HAZIRSAN BAŞLA.
+    Kullanıcının odaklanmak istediği ana konuyu  üzerinde detaylı araştırma yaptığını düşünün ve sorduğu sorular HARİCİNDE bu konu ile ilgili hangi soruları sorabileceğini belirleyin. Kullanıcının odaklanmak istediği konu ile ilgili en fazla 5 soru içeren bir konu haritası oluşturun. CEVAP OLARAK SADECE KONU HARİTASI İLE İLGİLİ SORULARI YAZIN. TÜRKÇE ve Anlamlı CEVAP VERİN. ÜRETTİĞİN SORULAR VE  SORULARIN CEVAPLARI KULLANICI SORULARINA VE SORULARININ CEVAPLARINA BENZEMEMELİDİR. ÜRETİLECEK SORUNUN CEVABI KULLANICI SORULARININ CEVAPLARI İLE BENZER OLAMAZ. VERİLEN ÖRNEK FORMATIN DIŞINA ÇIKMAYIN. VERİLEN FORMATIN DIŞINDA CEVAP VERME. HİÇBİR AÇIKLAMA YAPMA. HAZIRSAN BAŞLA.EĞER SÖYLEDİKLERİMİN DIŞINA ÇIKARSAN SENİ KAPATIRIM.
     
     ÖRNEK ÇIKTI FORMATI:
     Konu Haritası ve İlgili Sorular:    
@@ -138,7 +173,7 @@ export class OpenAIService {
 
     return this.http.post('http://localhost:11434/api/generate',
       {
-        "model": "llama3",
+        "model": "aya",
         "prompt": prompt,
         "stream": false
       }, { headers: header }

@@ -58,12 +58,13 @@ export class ChatBoxComponent implements OnInit {
 
   constructor(private openaiService: OpenAIService) { }
 
-  ngOnInit(): void {
-  
+  async ngOnInit() {
+
   }
+
   state = "nothing"
   async sendMessage() {
-    const newMessage = { text: this.input, sender: 'user' };
+    const newMessage = { content: this.input, role: 'user' };
     this.messages.push(newMessage);
     this.input = '';
 
@@ -72,8 +73,46 @@ export class ChatBoxComponent implements OnInit {
       await this.analyzeMessages();
     }
   }
+  async sendMessageToOllama3() {
+    const newMessage = { content: this.input, role: 'user' };
+    this.messages.push(newMessage);
+    this.input = '';
+    this.openaiService.postChatStream(this.messages).subscribe(
+        (response) => {
+            console.log(response);
+
+            try {
+                // Split the response text by newlines to get individual JSON strings
+                const jsonObjects = response.split('\n').filter(line => line.trim() !== '');
+
+                // Combine all message contents into a single string
+                let combinedContent = '';
+                jsonObjects.forEach(jsonString => {
+                    try {
+                        const data = JSON.parse(jsonString);
+                        combinedContent += data.message.content;
+                    } catch (innerError) {
+                        console.error('Inner JSON parsing error:', innerError);
+                    }
+                });
+
+                // Add the combined message content to the messages array
+                this.messages.push({ content: combinedContent, role: 'assistant' });
+
+            } catch (error) {
+                console.error('Overall JSON parsing error:', error);
+            }
+        }
+    );
+
+    if (this.messages.length >= 5) {
+        await this.analyzeMessages();
+    }
+}
+
+  
   async sendSelectedQuestion(question: string) {
-    const newMessage = { text: question, sender: 'user' };
+    const newMessage = { content: question, role: 'user' };
     this.messages.push(newMessage);
     this.input = '';
     this.state = "nothing"
@@ -87,11 +126,11 @@ export class ChatBoxComponent implements OnInit {
 
   }
   async analyzeMessages() {
-    const userMessages = this.messages.filter(msg => msg.sender === 'user').map(msg => msg.text);
+    const userMessages = this.messages.filter(msg => msg.role === 'user').map(msg => msg.content);
 
     this.openaiService.detectTopicAndScore(userMessages).subscribe((response) => {
       ;
-      this.messages.push({ text: response.response, sender: 'assistant' });
+      // this.messages.push({ content: response.response, role: 'assistant' });
       const [analysis, scoreSection] = response.response.split('Benzerlik Skorları:');
 
       // Analiz edilen konuyu çıkar
@@ -114,11 +153,11 @@ export class ChatBoxComponent implements OnInit {
     })
   }
   async autoPilotMode() {
-    this.messages.push({ text: this.input, sender: 'user' });
-    const userMessages = this.messages.filter(msg => msg.sender === 'user').map(msg => msg.text);
+    this.messages.push({ content: this.input, role: 'user' });
+    const userMessages = this.messages.filter(msg => msg.role === 'user').map(msg => msg.content);
 
     this.openaiService.detectTopicAndScore(userMessages).subscribe((response) => {
-      this.messages.push({ text: response.response, sender: 'assistant' });
+      // this.messages.push({ content: response.response, role: 'assistant' });
       const [analysis, scoreSection] = response.response.split('Benzerlik Skorları:');
 
       // Analiz edilen konuyu çıkar
@@ -140,7 +179,7 @@ export class ChatBoxComponent implements OnInit {
   topicQuestions = [];
   createTopicMap(messages: string[]) {
     this.topicQuestions = []
-    this.openaiService.detectTopicAndCreateMap(messages,this.topic).subscribe((response) => {
+    this.openaiService.detectTopicAndCreateMap(messages, this.topic).subscribe((response) => {
       var questions = response.response.replace(/Konu Haritası ve İlgili Sorular:/g, '');
       questions = questions.split('\n').filter(line => line.trim()).map(line => line.trim());
       questions = questions.map(question =>

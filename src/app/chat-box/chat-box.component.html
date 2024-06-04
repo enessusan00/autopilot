@@ -24,23 +24,23 @@
             Threshold: {{scoreThreshold}}
         </p>
     </div>
-    <div class="absolute bottom-0 bg-white/10 top-16 -z-0 left-2/12 right-2/12 md:left-1/4 md:right-1/4 sm:left-1/2 sm:right-1/2">
+    <div class="absolute bottom-0 left-0 right-0 bg-white/10 top-16 -z-0 md:left-96 md:right-96 sm:left-1/2 sm:right-1/2">
     </div>
-    <div class="z-10 flex-1 overflow-auto px-2/12 md:px-1/4 sm:px-1/2">
-        <div class="h-full p-4">
+    <div class="z-10 flex-1 px-2 overflow-auto md:px-96 sm:px-1/2">
+        <div class="h-full p-4 md:px-12">
             <div *ngFor="let msg of messages">
-                <div [ngClass]="{'text-right': msg.sender === 'user', 'text-left': msg.sender === 'bot'}" @talkAnimation>
-                    <div class="inline-block p-2 my-2 rounded-full"
-                        [ngClass]="{'bg-[#1E2022] text-white': msg.sender === 'user', 'bg-white/40 border-2 border-white/70 text-[#1E2022]': msg.sender === 'assistant'}">
-                        {{ msg.text }}
+                <div [ngClass]="{'text-right': msg.role === 'user', 'text-left': msg.role === 'assistant'}" @talkAnimation>
+                    <div class="inline-block p-2 my-2 rounded-md"
+                        [ngClass]="{'bg-[#1E2022] text-white': msg.role === 'user', 'bg-white/40 border-2 border-white/70 text-[#1E2022]': msg.role === 'assistant'}">
+                        {{ msg.content }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div *ngIf="topicQuestions.length != []" class="z-10 flex items-center justify-between gap-2 px-4" @list>
+    <div *ngIf="topicQuestions.length != []" class="absolute bottom-0 z-10 flex flex-col items-center justify-between gap-2 px-4 left-4" @list>
         <button (click)="sendSelectedQuestion(item)" *ngFor="let item of topicQuestions" @items
-            class="p-2 rounded-full border-2 border-white/70 text-sm bg-[#1E2022] text-white">
+            class="p-2 rounded-full border-2 border-white/70 text-sm bg-[#1E2022] text-white max-w-72">
             {{item}}
         </button>
         <button (click)="regenerateQuestions()" class="p-2 rounded-full border-2 border-white/70 text-sm bg-[#1E2022] text-white">
@@ -51,8 +51,8 @@
             </svg>
         </button>
     </div>
-    <div class="z-10 p-4 pt-0 border-gray-300 px-1/12 md:px-1/4 sm:px-1/2">
-        <input [(ngModel)]="input" (keydown.enter)="sendMessage()" type="text"
+    <div class="z-10 p-4 pt-0 border-gray-300 px-96 md:px-1/4 sm:px-1/2">
+        <input [(ngModel)]="input" (keydown.enter)="sendMessageToOllama3()" type="text"
             class="w-full p-2 border border-gray-300 rounded-full" placeholder="Type a message...">
     </div>
 </div>
