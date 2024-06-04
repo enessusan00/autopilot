@@ -19,6 +19,11 @@
     "declarativeNetRequestWithHostAccess",
     "declarativeNetRequestFeedback"
   ],
+  "icons": {
+    "16": "assets/icon-16.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
