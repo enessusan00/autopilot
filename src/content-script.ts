@@ -155,7 +155,7 @@ function trimFirstAndLast(str: string): string {
   if (str.length <= 2) {
     return ''; // Eğer stringin uzunluğu 2 veya daha az ise, boş string döndür.
   }
-  if (str.startsWith(`'`)) {
+  if (str.startsWith(`'`) || str.startsWith(`"`)) {
     return str.substring(1, str.length - 1);
   }
   return str;

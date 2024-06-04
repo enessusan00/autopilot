@@ -58,7 +58,7 @@ export class OpenAIService {
     `;
     return this.http.post('http://localhost:11434/api/generate',
       {
-        "model": "llama3",
+        "model": "aya",
         "prompt": prompt,
         "stream": false
       }, { headers: header }
@@ -100,7 +100,7 @@ export class OpenAIService {
 
     return this.http.post('http://localhost:11434/api/generate',
       {
-        "model": "llama3",
+        "model": "aya",
         "prompt": prompt,
         "stream": false
       }, { headers: header }
@@ -138,7 +138,7 @@ export class OpenAIService {
 
     return this.http.post('http://localhost:11434/api/generate',
       {
-        "model": "llama3",
+        "model": "aya",
         "prompt": prompt,
         "stream": false
       }, { headers: header }
