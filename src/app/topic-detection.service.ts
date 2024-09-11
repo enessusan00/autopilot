@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class TopicDetectionService {
   private apiUrl = 'https://api.openai.com/v1/chat/completions/gpt-4o';
-  private apiKey = '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';
+  private apiKey = '<YOUR API KEY>';
 
   constructor(private http: HttpClient) {}
 
