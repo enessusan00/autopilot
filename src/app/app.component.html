@@ -1,15 +1,1 @@
-<div style="width: 400px;height: 100px;">
-  <div>
-    Mesajlar Listesi:
-  </div>
-  <div *ngFor="let item of messages">
-    <div>
-      Role : {{item.authorRole}}<br>
-      Content :{{item.content}}<br>
-    </div>
-  </div>
-</div>
-
-<button (click)="sendMessage()">
-    DEMO
-</button>
+<router-outlet class="min-w-32 min-h-32"></router-outlet>

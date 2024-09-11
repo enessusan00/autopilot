@@ -1,0 +1,1 @@
+export const bg = `https://github.com/enessusan00/android_bluetooth_serial_app/assets/69691286/8de60775-ed29-4044-9b43-ff80d0207c90`
